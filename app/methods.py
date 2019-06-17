@@ -1,7 +1,7 @@
 import falcon
 import json
 import app.common as common
-from app.resources import (send_email, fetch_html)
+from app.resources import (send_email, fetch_html, update_cache, read_cache)
 from app.scraper import (scrape_product_data, format_results)
 import smtplib
 
@@ -28,8 +28,9 @@ def execute():
     try:
         html = fetch_html(common.SCRAPE_SOURCE)
         results = scrape_product_data(html, True)
-        print(len(results))
-        if len(results) > 0:
+        cache = read_cache()
+        if results != cache and len(results) > 0:
+            update_cache(results)
             send_email(format_results(results))
         return results
     except Exception as e:

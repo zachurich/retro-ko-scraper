@@ -19,6 +19,8 @@ __pycache__
 node_modules
 venv
 auth.json
+cache.json
+.vscode
 
 # Serverless directories
 .serverless
