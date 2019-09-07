@@ -40,18 +40,35 @@ def update_cache(data):
     tmp_file_path = root_dir + "/cache.json"
     output_file = "cache.json"
     s3 = boto3.client('s3')
-    with open(tmp_file_path, 'w+') as file:
-        file.write(json.dumps(data))
-    s3.upload_file(tmp_file_path, s3_bucket, output_file)
+    try:
+        with open(tmp_file_path, 'w+') as file:
+            file.write(json.dumps(data))
+        print('Created temp file!')
+    except Exception as e:
+        print('Failed to write to temp file.', e)
+    try:
+        s3.upload_file(tmp_file_path, s3_bucket, output_file)
+        print('Uploaded tmp file to cache!')
+    except Exception as e:
+        print('Failed to upload/overwrite cache file.', e)
+
+    try:
+        os.remove(tmp_file_path)
+    except Exception as e:
+        print('Failed remove temp cache file.', e)
 
 
 def read_cache():
     s3_bucket = get_s3_bucket_name()
     output_file = "cache.json"
-    s3 = boto3.resource('s3')
-    file_data = s3.Object(s3_bucket, output_file)
-    content = file_data.get()['Body'].read().decode('utf-8')
-    return json.loads(content)
+    try:
+        s3 = boto3.resource('s3')
+        file_data = s3.Object(s3_bucket, output_file)
+        content = file_data.get()['Body'].read().decode('utf-8')
+        print('Read cache file contents!')
+        return json.loads(content)
+    except Exception as e:
+        print('Failed to read cache file contents.', e)
 
 
 def get_s3_bucket_name():
