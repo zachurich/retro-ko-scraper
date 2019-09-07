@@ -37,7 +37,7 @@ def send_email(content):
 
 def update_cache(data):
     s3_bucket = get_s3_bucket_name()
-    tmp_file_path = root_dir + "/cache.json"
+    tmp_file_path = "/tmp/cache.json"
     output_file = "cache.json"
     s3 = boto3.client('s3')
     try:
